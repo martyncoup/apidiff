@@ -22,10 +22,16 @@ type jsonSummary struct {
 	Breaking      int `json:"breaking"`
 }
 
-func (f *JSONFormatter) Format(changes []model.Change) (string, error) {
+type jsonOutputWithVersion struct {
+	Summary            jsonSummary    `json:"summary"`
+	RecommendedVersion string         `json:"recommended_version,omitempty"`
+	Changes            []model.Change `json:"changes"`
+}
+
+func (f *JSONFormatter) Format(changes []model.Change, opts Options) (string, error) {
 	s := diff.Summarize(changes)
 
-	output := jsonOutput{
+	output := jsonOutputWithVersion{
 		Summary: jsonSummary{
 			Added:         s.Added,
 			Removed:       s.Removed,
@@ -33,6 +39,10 @@ func (f *JSONFormatter) Format(changes []model.Change) (string, error) {
 			Breaking:      s.Breaking,
 		},
 		Changes: changes,
+	}
+
+	if opts.RecommendVersion {
+		output.RecommendedVersion = string(diff.RecommendVersion(changes))
 	}
 
 	data, err := json.MarshalIndent(output, "", "  ")

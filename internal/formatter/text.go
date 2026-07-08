@@ -41,7 +41,7 @@ var (
 // TextFormatter outputs human-readable styled console output using lipgloss.
 type TextFormatter struct{}
 
-func (f *TextFormatter) Format(changes []model.Change) (string, error) {
+func (f *TextFormatter) Format(changes []model.Change, opts Options) (string, error) {
 	var b strings.Builder
 
 	summary := diff.Summarize(changes)
@@ -80,6 +80,14 @@ func (f *TextFormatter) Format(changes []model.Change) (string, error) {
 	if len(nonBreaking) > 0 {
 		b.WriteString(dimStyle.Render(fmt.Sprintf("  %d non-breaking change%s omitted (use --format json for full details)", len(nonBreaking), plural(len(nonBreaking)))))
 		b.WriteString("\n")
+	}
+
+	// Version recommendation
+	if opts.RecommendVersion {
+		bump := diff.RecommendVersion(changes)
+		versionStyle := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("14"))
+		b.WriteString("\n")
+		b.WriteString(fmt.Sprintf("%s Recommended version bump: %s\n", successIcon, versionStyle.Render(strings.ToUpper(string(bump)))))
 	}
 
 	return b.String(), nil

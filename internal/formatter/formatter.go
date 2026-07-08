@@ -6,9 +6,14 @@ import (
 	"github.com/martyn/apidiff/internal/model"
 )
 
+// Options controls optional output sections.
+type Options struct {
+	RecommendVersion bool
+}
+
 // Formatter formats a list of changes into an output string.
 type Formatter interface {
-	Format(changes []model.Change) (string, error)
+	Format(changes []model.Change, opts Options) (string, error)
 }
 
 // New returns a formatter for the given format name.

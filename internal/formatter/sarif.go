@@ -3,6 +3,7 @@ package formatter
 import (
 	"encoding/json"
 
+	"github.com/martyn/apidiff/internal/diff"
 	"github.com/martyn/apidiff/internal/model"
 )
 
@@ -10,14 +11,15 @@ import (
 type SARIFFormatter struct{}
 
 type sarifLog struct {
-	Schema  string      `json:"$schema"`
-	Version string      `json:"version"`
-	Runs    []sarifRun  `json:"runs"`
+	Schema  string     `json:"$schema"`
+	Version string     `json:"version"`
+	Runs    []sarifRun `json:"runs"`
 }
 
 type sarifRun struct {
-	Tool    sarifTool     `json:"tool"`
-	Results []sarifResult `json:"results"`
+	Tool       sarifTool              `json:"tool"`
+	Results    []sarifResult          `json:"results"`
+	Properties map[string]interface{} `json:"properties,omitempty"`
 }
 
 type sarifTool struct {
@@ -51,7 +53,7 @@ type sarifMessage struct {
 	Text string `json:"text"`
 }
 
-func (f *SARIFFormatter) Format(changes []model.Change) (string, error) {
+func (f *SARIFFormatter) Format(changes []model.Change, opts Options) (string, error) {
 	rules := buildRules()
 	results := make([]sarifResult, 0, len(changes))
 
@@ -63,22 +65,31 @@ func (f *SARIFFormatter) Format(changes []model.Change) (string, error) {
 		})
 	}
 
+	properties := map[string]interface{}{}
+	if opts.RecommendVersion {
+		properties["recommendedVersion"] = string(diff.RecommendVersion(changes))
+	}
+
+	run := sarifRun{
+		Tool: sarifTool{
+			Driver: sarifDriver{
+				Name:           "apidiff",
+				Version:        "0.1.0",
+				InformationURI: "https://github.com/martyn/apidiff",
+				Rules:          rules,
+			},
+		},
+		Results: results,
+	}
+
+	if len(properties) > 0 {
+		run.Properties = properties
+	}
+
 	log := sarifLog{
 		Schema:  "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
 		Version: "2.1.0",
-		Runs: []sarifRun{
-			{
-				Tool: sarifTool{
-					Driver: sarifDriver{
-						Name:           "apidiff",
-						Version:        "0.1.0",
-						InformationURI: "https://github.com/martyn/apidiff",
-						Rules:          rules,
-					},
-				},
-				Results: results,
-			},
-		},
+		Runs:    []sarifRun{run},
 	}
 
 	data, err := json.MarshalIndent(log, "", "  ")

@@ -11,12 +11,18 @@ import (
 // MarkdownFormatter outputs changes as a Markdown document.
 type MarkdownFormatter struct{}
 
-func (f *MarkdownFormatter) Format(changes []model.Change) (string, error) {
+func (f *MarkdownFormatter) Format(changes []model.Change, opts Options) (string, error) {
 	var b strings.Builder
 
 	summary := diff.Summarize(changes)
 
 	b.WriteString("# API Diff Report\n\n")
+
+	if opts.RecommendVersion {
+		bump := diff.RecommendVersion(changes)
+		b.WriteString(fmt.Sprintf("> **Recommended version bump: %s**\n\n", strings.ToUpper(string(bump))))
+	}
+
 	b.WriteString("## Summary\n\n")
 	b.WriteString(fmt.Sprintf("| Metric | Count |\n"))
 	b.WriteString(fmt.Sprintf("|--------|-------|\n"))

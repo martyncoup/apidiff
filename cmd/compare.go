@@ -11,10 +11,11 @@ import (
 )
 
 var (
-	oldSpec        string
-	newSpec        string
-	format         string
-	failOnBreaking bool
+	oldSpec          string
+	newSpec          string
+	format           string
+	failOnBreaking   bool
+	recommendVersion bool
 )
 
 var compareCmd = &cobra.Command{
@@ -29,6 +30,7 @@ func init() {
 	compareCmd.Flags().StringVar(&newSpec, "new", "", "path to the new/updated OpenAPI spec")
 	compareCmd.Flags().StringVar(&format, "format", "console", "output format: console, json, markdown, sarif")
 	compareCmd.Flags().BoolVar(&failOnBreaking, "fail-on-breaking", false, "exit with non-zero code if breaking changes are found")
+	compareCmd.Flags().BoolVar(&recommendVersion, "recommend-version", false, "include a suggested semantic version bump in the output")
 
 	_ = compareCmd.MarkFlagRequired("old")
 	_ = compareCmd.MarkFlagRequired("new")
@@ -54,7 +56,9 @@ func runCompare(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := f.Format(changes)
+	output, err := f.Format(changes, formatter.Options{
+		RecommendVersion: recommendVersion,
+	})
 	if err != nil {
 		return fmt.Errorf("formatting output: %w", err)
 	}
