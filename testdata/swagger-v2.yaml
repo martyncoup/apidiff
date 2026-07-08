@@ -1,0 +1,99 @@
+openapi: "3.0.3"
+info:
+  title: Sample API
+  version: "2.0.0"
+paths:
+  /users:
+    get:
+      summary: List users
+      operationId: listUsers
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      summary: Create user
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: Created
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /users/{id}/avatar:
+    get:
+      summary: Get user avatar
+      operationId: getUserAvatar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Avatar image
+  /teams:
+    get:
+      summary: List teams
+      operationId: listTeams
+      responses:
+        "200":
+          description: Successful response
+  /teams/{id}:
+    get:
+      summary: Get team by ID
+      operationId: getTeam
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - firstName
+        - email
+        - age
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        email:
+          type: string
+        age:
+          type: integer
+        displayName:
+          type: string
