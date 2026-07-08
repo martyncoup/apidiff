@@ -68,3 +68,5 @@ jobs:
         with:
           files: dist/*
           generate_release_notes: true
+          make_latest: true
+          name: ${{ github.ref_name }}
