@@ -15,6 +15,15 @@ Invoke-WebRequest -Uri "https://github.com/martyn/apidiff/releases/latest/downlo
 
 ### macOS / Linux
 
+#### Homebrew
+
+```bash
+brew tap martyncoup/tap
+brew install apidiff
+```
+
+#### Manual download
+
 ```bash
 # Download (adjust OS and arch as needed)
 curl -Lo apidiff https://github.com/martyn/apidiff/releases/latest/download/apidiff-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/')
