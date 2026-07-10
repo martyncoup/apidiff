@@ -4,13 +4,13 @@ A CLI tool that compares two OpenAPI/Swagger specifications and reports breaking
 
 ## Installation
 
-Download the latest binary from [Releases](https://github.com/martyn/apidiff/releases) and add it to your PATH.
+Download the latest binary from [Releases](https://github.com/martyncoup/apidiff/releases) and add it to your PATH.
 
 ### Windows
 
 ```powershell
 # Download and place in a directory on your PATH
-Invoke-WebRequest -Uri "https://github.com/martyn/apidiff/releases/latest/download/apidiff-windows-amd64.exe" -OutFile "$env:LOCALAPPDATA\Microsoft\WindowsApps\apidiff.exe"
+Invoke-WebRequest -Uri "https://github.com/martyncoup/apidiff/releases/latest/download/apidiff-windows-amd64.exe" -OutFile "$env:LOCALAPPDATA\Microsoft\WindowsApps\apidiff.exe"
 ```
 
 ### macOS / Linux
@@ -26,7 +26,7 @@ brew install apidiff
 
 ```bash
 # Download (adjust OS and arch as needed)
-curl -Lo apidiff https://github.com/martyn/apidiff/releases/latest/download/apidiff-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/')
+curl -Lo apidiff https://github.com/martyncoup/apidiff/releases/latest/download/apidiff-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/')
 chmod +x apidiff
 sudo mv apidiff /usr/local/bin/
 ```
@@ -34,7 +34,7 @@ sudo mv apidiff /usr/local/bin/
 ### From source
 
 ```bash
-go install github.com/martyn/apidiff@latest
+go install github.com/martyncoup/apidiff@latest
 ```
 
 ## Usage
